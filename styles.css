@@ -12,7 +12,7 @@
 }
 
 body {
-    background-color: #111111;
+    background-color: #d1c025;
     font-family: "Source Sans Pro";
     display: flex;
     flex-direction: column;
@@ -62,7 +62,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 750px;
+    height: 500px;
     width: 100vw;
 }
 
