@@ -12,12 +12,12 @@
 }
 
 body {
-    background-color: #d1c025;
+    background-color: #111111;
     font-family: "Source Sans Pro";
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 2000px;
+    height: 500px;
 }
 
 .tab {
