@@ -11,79 +11,80 @@
     <title>Atharva's Portfolio</title>
     <script src="https://kit.fontawesome.com/27e5cf34bc.js" crossorigin="anonymous"></script>
     
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
     <link href="Screenshot 2024-04-01 12.03.29 PM.ico" rel="icon" />
 </head>
 
-<body style = "background-color: aqua">
+<body style = "background-color: #2ea52e">
     <nav class="navbar">
         <ul>
             <li>
                 <i class="fa-solid fa-house-chimney"></i>
-                <a href="index.html">Home</a>
+                <a href="/">Home</a>
             </li>
             <li>
-                <i class="fa-solid fa-circle-info"></i>
-                <a href="about-me.html">About Me</a>
+                <i class="fa-solid fa-flag-checkered"></i>
+                <a href="#goals">Goals</a>
+            </li>
+            <li>
+                <i class="fa-solid fa-map"></i>
+                <a href="#projects">CS Journey</a>
             </li>
             <li>
                 <i class="fa-solid fa-book"></i>
-                <a href="my-blogs.html">My Blogs</a>
+                <a href="#blogs">Blogs</a>
+            </li>
+            <li>
+                <i class="fa-solid fa-user"></i>
+                <a href="#aboutme">About Me</a>
             </li>
         </ul>
     </nav>
 
-    <section  style = "margin-top: 50px" id="intro" class="intro">
-        <div class="visual">
-            <!--<img src="Screenshot 2024-04-01 12.03.29 PM.ico" 
-                width = "400"
-                length = "400">-->
+    <div class="frontpage b1">
+        <div class="frontpage-items-container">
+            <h1 data-aos="fade" data-aos-duration="1000">Atharva Kadam</h1>
+            <h2 data-aos="fade" data-aos-duration="1500">Computer Programmer based in South Brunswick, NJ</h2>
         </div>
-        <div class="headings">
-            <bio style="text-align: center">HI, my name is Atharva! <br> I love to code, play chess and other games, and watch movies. I have dabbled with many aspects of Computer Science and other facets of life. On this website, you will find some of my experiences and journeys that I have taken thus far. Enjoy!</bio>
-            <div class="socials">
-                <a href="https://github.com/AtharvaK123" target="_blank" rel="noreferrer noopener">
-                    <i class="fa-brands fa-github"></i>
-                </a>
-                <a href="https://chess.com/member/amkoolgamez" target="_blank" rel="noreferrer noopener">
-                    <i class="fas fa-chess-king"></i>
-                </a>
-                <a href="https://www.instagram.com/atharrrva.k/" target="_blank" rel="noreferrer noopener">
-                    <i class="fa-brands fa-instagram"></i>
-                </a>
-                <a href="https://www.snapchat.com/add/atharva_kad5657?sender_web_id=7770142b-52f6-4f22-ac3e-ad0f1e0dd314&device_type=desktop&is_copy_url=true" target="_blank" rel="noreferrer noopener">
-                    <i class="fa-brands fa-snapchat"></i>
-                </a>
-                <a href="https://www.linkedin.com/in/atharva-kadam-a281332b1/" target="_blank" rel="noreferrer noopener">
-                    <i class="fa-brands fa-linkedin"></i>
-                </a>
-            </div>
-        </div>
-    </section>
+    </div>
 
-    <section  style= "margin-top: 50px"   id="firstGame" class="intro">
-        <div class="headings">
-            <bio style = "font-size: 70px"><a style = "color: white" href = "https://github.com/AtharvaK123/Trex-Game">Trex-Game</a>
-                <p style = "font-size: 30px">In this recreation of the famous Google Dinosaur Game, the player uses the T-rex to survive as long as possible while avoiding all obstacles.<br><br>Language: JavaScript</p>
-            </bio>
-        </div>
+    <div class="frontpage b2" id="goals">
+        <div class="aboutus-items-container">
+            <h2 data-aos="fade" data-aos-duration="1000">My Goals</h2>
+            <p data-aos="fade" data-aos-duration="1500">
 
-        <div class="visual">
-            <!--<img src="Screenshot 2024-04-01 12.03.29 PM.ico" 
-                width = "400"
-                length = "400">-->
+            </p data-aos="fade" data-aos-duration="1500">
         </div>
-    </section>
+    </div>
 
-    <section  style= "margin-top: 50px" id="secondGame" class="intro">
-        <div class="visual">
-            <!--<img src="Screenshot 2024-04-01 12.03.29 PM.ico" 
-                width = "400"
-                length = "400">-->
+    <div class="frontpage b3" id="projects">
+        <div class="aboutus-items-container">
+            <h2 data-aos="fade" data-aos-duration="1000">Computer Science Journey</h2>
+            <p data-aos="fade" data-aos-duration="1500">
+
+            </p data-aos="fade" data-aos-duration="1500">
         </div>
-        <div class="headings">
-            <bio style = "font-size: 70px"><a style = "color: white" href = "https://github.com/AtharvaK123/Trex-Game">Trex-Game</a>
-                <p style = "font-size: 30px">In this recreation of the famous Google Dinosaur Game, the player uses the T-rex to survive as long as possible while avoiding all obstacles.</p>
-            </bio>
+    </div>
+
+    <div class="frontpage b4" id="blogs">
+        <div class="aboutus-items-container">
+            <h2 data-aos="fade" data-aos-duration="1000">Blogs</h2>
+            <p data-aos="fade" data-aos-duration="1500">
+              
+            </p data-aos="fade" data-aos-duration="1500">
         </div>
-    </section>
+    </div>
+    <div class="frontpage b5" id="aboutme">
+        <div class="aboutus-items-container">
+            <h2 data-aos="fade" data-aos-duration="1000">About Me</h2>
+            <p data-aos="fade" data-aos-duration="1500">
+
+            </p data-aos="fade" data-aos-duration="1500">
+        </div>
+    </div>
+    <script>
+        AOS.init();
+    </script>
 </body>
