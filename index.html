@@ -1,150 +1,1215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="styles.css" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">   
-    <title>Atharva's Portfolio</title>
-    <script src="https://kit.fontawesome.com/27e5cf34bc.js" crossorigin="anonymous"></script>
-    
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
-    <link href="Screenshot 2024-04-01 12.03.29 PM.ico" rel="icon" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Atharva Kadam — building because I'm curious</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   0. TOKENS
+   ========================================================= */
+:root{
+  --void:      #07060c;
+  --void-2:    #0d0b17;
+  --surface:   #12101e;
+  --surface-2: #181528;
+  --line:      rgba(255,255,255,0.09);
+  --line-soft: rgba(255,255,255,0.05);
+  --ink:       #f3f1fb;
+  --ink-dim:   #a7a2c2;
+  --ink-faint: #6c6787;
+
+  --violet: #8b6bff;
+  --violet-2:#6446e8;
+  --cyan:   #35e6d6;
+  --magenta:#ff4fc3;
+  --amber:  #ffb454;
+
+  --grad-aurora: linear-gradient(135deg, var(--violet) 0%, var(--magenta) 52%, var(--cyan) 100%);
+  --grad-text:   linear-gradient(120deg, #fff 0%, #cfc7ff 40%, var(--cyan) 100%);
+  --grad-line:   linear-gradient(180deg, var(--violet), transparent);
+
+  --display: 'Space Grotesk', ui-sans-serif, sans-serif;
+  --body:    'Inter', ui-sans-serif, sans-serif;
+  --mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  --ease: cubic-bezier(.16,.84,.44,1);
+  --ease-soft: cubic-bezier(.22,.61,.36,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--body);
+  line-height:1.6;
+  overflow-x:hidden;
+  cursor:none;
+}
+@media (pointer:coarse){ body{cursor:auto;} }
+::selection{background:var(--magenta);color:#0a0a12;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+.mono{font-family:var(--mono);}
+.eyebrow{
+  font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--cyan);display:flex;align-items:center;gap:10px;margin-bottom:20px;
+}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--cyan);display:inline-block;}
+h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-0.02em;}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease-soft), transform .8s var(--ease-soft);}
+.reveal.in{opacity:1;transform:translateY(0);}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* =========================================================
+   1. AMBIENT BACKGROUND (canvas aurora + starfield)
+   ========================================================= */
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* =========================================================
+   2. CUSTOM CURSOR
+   ========================================================= */
+#cursorDot{position:fixed;width:8px;height:8px;border-radius:50%;background:var(--cyan);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:background .2s;}
+#cursorRing{position:fixed;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.35);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .25s var(--ease-soft),height .25s var(--ease-soft),border-color .25s,background .25s;}
+#cursorRing.grow{width:70px;height:70px;background:rgba(139,107,255,.12);border-color:var(--violet);}
+#cursorRing .label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--ink);opacity:0;transition:opacity .2s;}
+#cursorRing.grow .label{opacity:1;}
+@media (pointer:coarse){#cursorDot,#cursorRing{display:none;}}
+
+/* =========================================================
+   3. BOOT SCREEN
+   ========================================================= */
+#boot{position:fixed;inset:0;background:var(--void);color:var(--cyan);font-family:var(--mono);
+  z-index:999;padding:8vh 6vw;font-size:14px;white-space:pre-wrap;}
+#boot .cursor{display:inline-block;width:8px;height:1em;background:var(--cyan);vertical-align:-2px;animation:blink 1s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+#boot.hide{display:none;}
+#app{display:none;position:relative;z-index:2;}
+#app.show{display:block;}
+
+/* =========================================================
+   4. NAV — floating glass pill
+   ========================================================= */
+nav.floatnav{
+  position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:500;
+  display:flex;align-items:center;gap:4px;padding:8px;border-radius:100px;
+  background:rgba(18,15,28,.55);backdrop-filter:blur(18px) saturate(140%);
+  border:1px solid var(--line);box-shadow:0 10px 40px rgba(0,0,0,.35);
+  transition:top .35s var(--ease-soft), background .35s;
+}
+nav.floatnav.hidden{top:-90px;}
+nav.floatnav .brand{font-family:var(--mono);font-size:12px;color:var(--ink);padding:0 14px;letter-spacing:.06em;white-space:nowrap;}
+nav.floatnav a{font-family:var(--mono);font-size:12.5px;color:var(--ink-dim);padding:9px 15px;border-radius:100px;position:relative;transition:color .25s;white-space:nowrap;}
+nav.floatnav a:hover{color:var(--ink);}
+nav.floatnav a.active{color:var(--void);}
+nav.floatnav .pill-bg{position:absolute;top:8px;left:0;height:calc(100% - 16px);border-radius:100px;background:var(--grad-aurora);transition:left .4s var(--ease), width .4s var(--ease);z-index:-1;}
+nav.floatnav .navlinks{position:relative;display:flex;}
+#navToggle{display:none;position:fixed;top:18px;right:18px;z-index:520;width:46px;height:46px;border-radius:50%;
+  background:rgba(18,15,28,.7);backdrop-filter:blur(14px);border:1px solid var(--line);color:var(--ink);
+  align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:4px;}
+#navToggle span{width:18px;height:2px;background:var(--ink);border-radius:2px;transition:.3s;}
+#navToggle.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+#navToggle.open span:nth-child(2){opacity:0;}
+#navToggle.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+@media (max-width:860px){
+  nav.floatnav{flex-direction:column;top:0;left:0;right:0;transform:none;width:100%;border-radius:0;
+    background:rgba(7,6,12,.97);backdrop-filter:none;border:none;border-bottom:1px solid var(--line);
+    max-height:0;overflow:hidden;padding:0;transition:max-height .4s var(--ease-soft);}
+  nav.floatnav.open{max-height:70vh;padding:70px 6vw 24px;}
+  nav.floatnav.hidden{top:0;}
+  nav.floatnav .brand{padding:0 0 18px;}
+  nav.floatnav .navlinks{flex-direction:column;width:100%;gap:2px;}
+  nav.floatnav a{padding:14px 4px;font-size:15px;}
+  nav.floatnav .pill-bg{display:none;}
+  #navToggle{display:flex;}
+}
+
+/* =========================================================
+   5. SECTION SCAFFOLD
+   ========================================================= */
+main{position:relative;}
+section{padding:150px 8vw;position:relative;}
+@media (max-width:860px){section{padding:100px 6vw;}}
+p.lead{max-width:620px;color:var(--ink-dim);font-size:17px;}
+
+/* =========================================================
+   6. HERO
+   ========================================================= */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:80px;overflow:hidden;}
+.hero-frag{position:absolute;font-family:var(--mono);font-size:12px;color:var(--ink-faint);opacity:.5;white-space:nowrap;pointer-events:none;user-select:none;}
+#hero .kicker{font-family:var(--mono);font-size:13px;color:var(--ink-dim);letter-spacing:.1em;margin-bottom:22px;display:flex;align-items:center;gap:10px;}
+#hero .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+.hero-name{font-family:var(--display);font-weight:700;line-height:.92;letter-spacing:-0.03em;font-size:clamp(56px,11vw,150px);}
+.hero-name .line{display:block;overflow:hidden;}
+.hero-name .line span{display:block;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent;
+  transform:translateY(105%);transition:transform 1s var(--ease);}
+.hero-name.play .line span{transform:translateY(0);}
+.hero-name .line:nth-child(2) span{transition-delay:.12s;}
+#hero .tagline{font-family:var(--display);font-size:clamp(18px,2.4vw,26px);color:var(--ink);margin-top:26px;max-width:640px;opacity:0;transform:translateY(14px);transition:opacity .8s var(--ease-soft) 1.05s, transform .8s var(--ease-soft) 1.05s;}
+#hero .tagline.play{opacity:1;transform:translateY(0);}
+#hero .subtext{margin-top:16px;color:var(--ink-dim);max-width:560px;font-size:16px;opacity:0;transition:opacity .8s ease 1.25s;}
+#hero .subtext.play{opacity:1;}
+#hero .cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:44px;opacity:0;transition:opacity .8s ease 1.4s;}
+#hero .cta-row.play{opacity:1;}
+.magnetic-btn{
+  position:relative;font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;padding:15px 26px;border-radius:100px;
+  border:1px solid var(--line);color:var(--ink);background:rgba(255,255,255,.02);cursor:pointer;
+  transition:border-color .3s, background .3s, transform .15s;overflow:hidden;
+}
+.magnetic-btn.primary{background:var(--grad-aurora);color:#0a0a12;border:none;font-weight:600;}
+.magnetic-btn:hover{border-color:var(--violet);}
+.scroll-cue{position:absolute;bottom:36px;left:8vw;font-family:var(--mono);font-size:11px;color:var(--ink-faint);display:flex;align-items:center;gap:10px;}
+.scroll-cue .line{width:1px;height:34px;background:linear-gradient(var(--cyan),transparent);animation:scrollcue 1.8s infinite;}
+@keyframes scrollcue{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+
+/* =========================================================
+   7. ABOUT
+   ========================================================= */
+.about-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:36px 0 56px;}
+@media (max-width:960px){.about-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:540px){.about-grid{grid-template-columns:1fr;}}
+.about-card{
+  padding:26px 22px;border-radius:16px;background:var(--surface);border:1px solid var(--line);
+  position:relative;overflow:hidden;transition:transform .4s var(--ease-soft), border-color .4s;
+}
+.about-card:hover{transform:translateY(-6px);border-color:var(--violet);}
+.about-card::before{content:"";position:absolute;inset:-40% -40% auto auto;width:140px;height:140px;border-radius:50%;
+  background:var(--grad-aurora);filter:blur(40px);opacity:0;transition:opacity .4s;}
+.about-card:hover::before{opacity:.35;}
+.about-card .glyph{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.1em;margin-bottom:18px;}
+.about-card h3{font-size:19px;margin-bottom:10px;}
+.about-card p{font-size:14px;color:var(--ink-dim);}
+.bio-block{max-width:660px;}
+.bio-block p{color:var(--ink-dim);font-size:16.5px;margin-bottom:16px;}
+.bio-block p:last-child{color:var(--ink);font-style:italic;}
+
+/* =========================================================
+   8. CURRENTLY pills
+   ========================================================= */
+.pills-wrap{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;}
+.pill{
+  font-family:var(--mono);font-size:13px;padding:11px 18px;border-radius:100px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink-dim);opacity:0;transform:translateY(14px) scale(.95);
+  transition:opacity .5s var(--ease-soft), transform .5s var(--ease-soft), border-color .3s, color .3s;
+}
+.pill.in{opacity:1;transform:translateY(0) scale(1);}
+.pill:hover{border-color:var(--cyan);color:var(--ink);}
+
+/* =========================================================
+   9. JOURNEY
+   ========================================================= */
+.timeline{max-width:760px;margin-top:20px;position:relative;}
+.timeline::before{content:"";position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:var(--line);}
+.timeline .tprog{position:absolute;left:9px;top:8px;width:2px;background:var(--grad-aurora);height:0;transition:height .2s linear;}
+.tstep{position:relative;padding:0 0 64px 46px;opacity:.35;transition:opacity .5s;}
+.tstep.in{opacity:1;}
+.tstep:last-child{padding-bottom:0;}
+.tstep .node{position:absolute;left:0;top:2px;width:20px;height:20px;border-radius:50%;background:var(--surface);border:2px solid var(--line);transition:border-color .4s, box-shadow .4s;}
+.tstep.in .node{border-color:var(--cyan);box-shadow:0 0 16px rgba(53,230,214,.5);}
+.tstep .stage{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-faint);}
+.tstep h3{font-size:21px;margin:6px 0 8px;}
+.tstep p{color:var(--ink-dim);font-size:15px;max-width:520px;}
+.tstep .when{display:block;font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:10px;}
+.tstep.final h3{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+/* =========================================================
+   10. PROJECTS
+   ========================================================= */
+.proj-featured{
+  border-radius:22px;border:1px solid var(--line);background:linear-gradient(160deg, var(--surface), var(--void-2));
+  padding:44px;position:relative;overflow:hidden;margin-bottom:22px;
+}
+.proj-featured::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 15%, rgba(139,107,255,.22), transparent 55%);pointer-events:none;}
+.proj-featured .top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;position:relative;}
+.status-chip{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--amber);border:1px solid rgba(255,180,84,.35);
+  padding:6px 12px;border-radius:100px;display:flex;align-items:center;gap:8px;background:rgba(255,180,84,.06);}
+.status-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 1.6s infinite;}
+.orb-wrap{width:100%;max-width:220px;aspect-ratio:1;margin:26px 0;position:relative;}
+#minionOrb{width:100%;height:100%;}
+.proj-featured h3{font-size:clamp(28px,4vw,40px);margin-top:10px;position:relative;}
+.proj-featured p.desc{color:var(--ink-dim);max-width:520px;position:relative;margin-top:10px;}
+
+.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+@media (max-width:960px){.proj-grid{grid-template-columns:1fr;}}
+.proj-card{
+  border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:26px;
+  display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden;
+  transition:transform .4s var(--ease-soft), border-color .4s;
+}
+.proj-card:hover{transform:translateY(-8px);border-color:var(--cyan);}
+.proj-card .num{font-family:var(--mono);font-size:12px;color:var(--ink-faint);}
+.proj-card .titlebar h3{font-size:18px;margin-top:4px;}
+.proj-card .stack{font-family:var(--mono);font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;}
+.proj-card p.desc{font-size:14px;color:var(--ink-dim);}
+.proj-card .row{display:flex;gap:10px;margin-top:auto;padding-top:6px;}
+.btn{font-family:var(--mono);font-size:12px;padding:9px 14px;border-radius:100px;border:1px solid var(--line);color:var(--ink);
+  background:transparent;cursor:pointer;transition:border-color .25s, color .25s;}
+.btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.btn.primary{border-color:var(--violet);color:var(--violet);}
+.btn.primary:hover{background:var(--violet);color:#fff;}
+
+.app-window{display:none;margin-top:22px;border:1px solid var(--violet);border-radius:16px;overflow:hidden;background:#08070f;}
+.app-window.open{display:block;}
+.app-window .bar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--surface-2);border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--ink-dim);}
+.app-window .bar button{background:none;border:none;color:var(--ink-dim);cursor:pointer;font-family:var(--mono);font-size:14px;}
+.app-window .bar button:hover{color:var(--magenta);}
+.app-window .body{padding:22px;}
+
+/* =========================================================
+   11. PLAYGROUND
+   ========================================================= */
+.playground-panel{border:1px solid var(--line);border-radius:20px;background:var(--surface);padding:26px;position:relative;overflow:hidden;}
+#trailCanvas{width:100%;height:340px;border-radius:14px;background:#050409;display:block;touch-action:none;}
+.playground-hint{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin-top:12px;}
+
+/* =========================================================
+   12. ARCHIVES / blog
+   ========================================================= */
+.archive-list{max-width:760px;}
+.archive-entry{border:1px solid var(--line);border-radius:14px;margin-bottom:14px;background:var(--surface);overflow:hidden;}
+.archive-entry summary{list-style:none;cursor:pointer;padding:20px 22px;display:flex;justify-content:space-between;gap:16px;align-items:baseline;}
+.archive-entry summary::-webkit-details-marker{display:none;}
+.archive-entry summary .t{font-family:var(--display);color:var(--ink);font-size:16px;font-weight:600;}
+.archive-entry summary .d{font-family:var(--mono);color:var(--ink-faint);font-size:11px;white-space:nowrap;}
+.archive-entry .content{padding:0 22px 26px;font-size:15px;color:var(--ink-dim);max-height:0;overflow:hidden;transform:translateY(-8px);opacity:0;transition:max-height .5s var(--ease-soft), opacity .4s, transform .4s;}
+.archive-entry[open] .content{max-height:2000px;opacity:1;transform:translateY(0);}
+.archive-entry[open] summary{border-bottom:1px solid var(--line);}
+.archive-entry summary:hover .t{color:var(--cyan);}
+.archive-entry .content p{margin-bottom:12px;}
+
+/* =========================================================
+   13. CONTACT
+   ========================================================= */
+#contact{text-align:center;}
+#contact h2{font-size:clamp(30px,5vw,52px);margin-bottom:16px;}
+#contact p.lead{margin:0 auto 40px;}
+.link-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-bottom:70px;}
+.link-card{border:1px solid var(--line);border-radius:100px;padding:14px 26px;font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--surface);transition:border-color .3s, transform .3s;}
+.link-card:hover{border-color:var(--magenta);transform:translateY(-4px);}
+.seeyou{font-family:var(--display);font-weight:700;font-size:clamp(40px,9vw,110px);background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.02em;}
+
+footer{padding:40px 8vw 60px;font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid var(--line-soft);}
+
+/* =========================================================
+   14. mini games shared styles
+   ========================================================= */
+.ms-cell{width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;border:1px solid var(--line);background:var(--surface-2);cursor:pointer;user-select:none;color:var(--ink);border-radius:3px;}
+.ms-cell.revealed{background:#08070f;cursor:default;}
+.ms-cell.mine{background:var(--magenta);}
+#msBoard{display:grid;gap:2px;width:max-content;}
+#msMeta{font-family:var(--mono);font-size:12px;color:var(--ink-dim);display:flex;gap:16px;margin-bottom:12px;}
+#juliaCanvas{width:100%;max-width:480px;aspect-ratio:1/1;background:#000;border-radius:10px;cursor:crosshair;display:block;}
+.julia-hint{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:10px;}
+.bt-form{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;font-family:var(--mono);font-size:12px;}
+.bt-form input,.bt-form select{background:var(--surface-2);border:1px solid var(--line);color:var(--ink);padding:9px 11px;border-radius:6px;font-family:var(--mono);font-size:12px;}
+.bt-bal{font-family:var(--mono);font-size:24px;margin-bottom:14px;}
+.bt-list{max-height:180px;overflow-y:auto;font-family:var(--mono);font-size:12px;}
+.bt-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);color:var(--ink-dim);}
+.bt-row button{background:none;border:none;color:var(--magenta);cursor:pointer;font-family:var(--mono);}
+
+/* =========================================================
+   15. TERMINAL
+   ========================================================= */
+#termOverlay{
+  position:fixed;bottom:0;right:0;width:min(480px,100vw);max-height:60vh;
+  background:#08070f;border:1px solid var(--violet);border-radius:12px 0 0 0;
+  font-family:var(--mono);font-size:13px;z-index:600;display:none;flex-direction:column;
+  box-shadow:0 -10px 50px rgba(0,0,0,.6);
+}
+#termOverlay.open{display:flex;}
+#termOverlay .tbar{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line);color:var(--ink-dim);align-items:center;}
+#termOverlay .tbar button{background:none;border:none;color:var(--ink-dim);cursor:pointer;font-family:var(--mono);}
+#termLog{flex:1;overflow-y:auto;padding:14px;color:var(--ink);}
+#termLog div{margin-bottom:6px;white-space:pre-wrap;word-break:break-word;}
+#termLog .p{color:var(--cyan);}
+#termLog .o{color:var(--ink-dim);}
+#termInputRow{display:flex;border-top:1px solid var(--line);padding:10px 14px;gap:8px;}
+#termInputRow span{color:var(--cyan);}
+#termInput{flex:1;background:none;border:none;outline:none;color:var(--ink);font-family:var(--mono);font-size:13px;}
+
+/* secret gate */
+#secretGate{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
+#secretGate.open{display:flex;}
+#secretGate .box{background:var(--surface);border:1px solid var(--violet);border-radius:12px;padding:30px;max-width:420px;font-family:var(--mono);font-size:13px;color:var(--ink-dim);text-align:center;}
+#secretGate .box button{margin-top:18px;}
+#secretFrame{width:100%;height:100%;border:none;}
+
+/* konami toast */
+#konamiToast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(140%);z-index:700;
+  font-family:var(--mono);font-size:12.5px;padding:14px 22px;border-radius:100px;background:var(--grad-aurora);color:#0a0a12;
+  transition:transform .5s var(--ease);white-space:nowrap;}
+#konamiToast.show{transform:translateX(-50%) translateY(0);}
+</style>
 </head>
+<body>
 
-<body style = "background-color: #a52e2e">
+<canvas id="bgCanvas"></canvas>
+<div class="grain"></div>
+<div id="cursorDot"></div>
+<div id="cursorRing"><span class="label"></span></div>
 
+<div id="boot"><span id="bootText"></span><span class="cursor"></span></div>
 
+<button id="navToggle" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
 
-    <nav class="navbar">
-        <ul>
-            <li>
-                <i class="fa-solid fa-house-chimney"></i>
-                <a href="/">Home</a>
-            </li>
-            <li>
-                <i class="fa-solid fa-flag-checkered"></i>
-                <a href="#goals">Goals</a>
-            </li>
-            <li>
-                <i class="fa-solid fa-map"></i>
-                <a href="#projects">CS Journey</a>
-            </li>
-            <li>
-                <i class="fa-solid fa-book"></i>
-                <a href="#blogs">Blogs</a>
-            </li>
-            <li>
-                <i class="fa-solid fa-user"></i>
-                <a href="#aboutme">About Me</a>
-            </li>
-            <li>
-                <i class="fa-solid fa-gamepad"></i>
-                <a href="#game">Game</a>
-            </li>
-        </ul>
-    </nav>
+<div id="app">
 
-    <div class="frontpage b1">
-        <div class="frontpage-items-container" style="display: flex; justify-content: space-between; align-items: center; margin-top: -4.5%;">
-            <div class="text-content">
-                <h1 data-aos="fade" data-aos-duration="1000">Atharva Kadam</h1>
-                <h2 data-aos="fade" data-aos-duration="1500">Computer Programmer based in South Brunswick, NJ</h2>
-            </div>
+  <nav class="floatnav" id="floatNav">
+    <span class="brand">ATHARVA//</span>
+    <div class="navlinks" id="navLinks">
+      <div class="pill-bg" id="pillBg"></div>
+      <a href="#hero" class="nav-link" data-id="hero">Home</a>
+      <a href="#about" class="nav-link" data-id="about">About</a>
+      <a href="#journey" class="nav-link" data-id="journey">Journey</a>
+      <a href="#projects" class="nav-link" data-id="projects">Projects</a>
+      <a href="#playground" class="nav-link" data-id="playground">Playground</a>
+      <a href="#archives" class="nav-link" data-id="archives">Writing</a>
+      <a href="#contact" class="nav-link" data-id="contact">Contact</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ============ HERO ============ -->
+    <section id="hero">
+      <div id="heroFrags"></div>
+      <div class="kicker"><span class="dot"></span>currently building things that probably didn't need to exist</div>
+      <h1 class="hero-name" id="heroName">
+        <span class="line"><span>ATHARVA</span></span>
+        <span class="line"><span>KADAM</span></span>
+      </h1>
+      <p class="tagline" id="heroTag">I build things because I'm curious what happens when I do.</p>
+      <p class="subtext" id="heroSub">Data Science student at Rutgers, coding instructor at Code Ninjas Robbinsville, and someone who turns "how hard could it be" into working software.</p>
+      <div class="cta-row" id="heroCta">
+        <a class="magnetic-btn primary" href="#projects">MY PROJECTS</a>
+        <a class="magnetic-btn" href="#about">WHO AM I?</a>
+        <a class="magnetic-btn" href="#" onclick="openShell();return false;">$ OPEN SHELL</a>
+      </div>
+      <div class="scroll-cue"><div class="line"></div>SCROLL</div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section id="about">
+      <div class="eyebrow">who is atharva</div>
+      <h2 class="reveal">Four things that explain me<br>more than a résumé could.</h2>
+      <div class="about-grid" id="aboutGrid"></div>
+      <div class="bio-block reveal" id="bioBlock"></div>
+
+      <div style="margin-top:70px;">
+        <div class="eyebrow">right now</div>
+        <div class="pills-wrap" id="pillsWrap"></div>
+      </div>
+    </section>
+
+    <!-- ============ JOURNEY ============ -->
+    <section id="journey">
+      <div class="eyebrow">the path so far</div>
+      <h2 class="reveal">A rough timeline of<br>how I got here.</h2>
+      <div class="timeline" id="timeline"><div class="tprog" id="tprog"></div></div>
+    </section>
+
+    <!-- ============ PROJECTS ============ -->
+    <section id="projects">
+      <div class="eyebrow">things I've built</div>
+      <h2 class="reveal">Projects, in the flesh —<br>not screenshots.</h2>
+      <p class="lead reveal" style="margin-bottom:40px;">Everything below is the actual, unmodified code from the repo. Hit run and it plays for real.</p>
+
+      <div class="proj-featured reveal">
+        <div class="top">
+          <div>
+            <span class="mono" style="font-size:12px;color:var(--ink-faint);">FEATURED / 00</span>
+          </div>
+          <span class="status-chip"><span class="dot"></span>IN DEVELOPMENT</span>
         </div>
-    </div>
-    
-    
-
-    <div class="frontpage b2" id="goals">
-        <div class="aboutus-items-container">
-            <h2 data-aos="fade" data-aos-duration="1000">My Goals</h2>
-            <p data-aos="fade" data-aos-duration="1500">
-                
-            </p data-aos="fade" data-aos-duration="1500">
+        <div class="orb-wrap"><canvas id="minionOrb"></canvas></div>
+        <h3>MINION AI</h3>
+        <p class="desc">An experiment in building my own voice-activated desktop assistant — wake-word detection, clap triggers, and a UI that tries to feel alive. Still evolving, still breaking, still worth it.</p>
+        <div class="row" style="margin-top:22px;position:relative;">
+          <a class="btn primary" href="#" onclick="alert('Repo is still private while MinionAI is mid-rebuild — check back soon.');return false;">↗ repo pending</a>
         </div>
-    </div>
+      </div>
 
-    <div class="frontpage b3" id="projects">
-        <div class="aboutus-items-container">
-            <h2 data-aos="fade" data-aos-duration="1000">Computer Science Journey</h2>
-            <p data-aos="fade" data-aos-duration="1500">
-                This section highlights all the twists and turns that I have encountered since I began coding. There have been many challenges both in school career pathways and out-of-school coding experience that I have had to overcome. All of these hardships, solutions, and coding experiences will be in full display to whoever is interesed.
-            </p data-aos="fade" data-aos-duration="1500">
-        </div>
-    </div>
+      <div class="proj-grid" id="projGrid" style="margin-top:20px;"></div>
+    </section>
 
-    <div class="frontpage b4" id="blogs">
-        <div style = "text-align: center" class="aboutus-items-container">
-            <h2 data-aos="fade" data-aos-duration="1000" style = "font-size: 50px;">Blogs</h2><br><br><br>
-            <p data-aos="fade" data-aos-duration="1500" style = "font-size: 40px;">
-              For a while, I had created some blogs that I had created depending on my writing skill level at the time. I had used this blogs not only as a way to not only improve my writing skills but be able to get good at getting my thoughts out in an organized manner. Reflectively, as you go through all of my blogs, you will see major improvement in my writing skills and all the things that were on my mind at that time. I now lay these blogs down so I can reminisce on times past and and recall my multiple phases of life.
-            </p data-aos="fade" data-aos-duration="1500"><br><br><br><br><br>
-            <button class="glow-on-hover" type="button" id="but">
-                <a style = "font-size: 20px; text-decoration: none;">
-                    My Blogs
-                </a>
-            </button>
-        </div>
-    </div>
+    <!-- ============ PLAYGROUND ============ -->
+    <section id="playground">
+      <div class="eyebrow">just for fun</div>
+      <h2 class="reveal">Playground.</h2>
+      <p class="lead reveal" style="margin-bottom:32px;">No purpose here except to mess around. Move your mouse. Click things. See what happens.</p>
+      <div class="playground-panel reveal">
+        <canvas id="trailCanvas"></canvas>
+        <p class="playground-hint">a cursor-reactive particle field — every dot is chasing where you last were.</p>
+      </div>
+    </section>
 
-    <div class="frontpage b5" id="aboutme">
-        <div class="aboutus-items-container">
-            <h2 data-aos="fade" data-aos-duration="1000">About Me</h2>
-            <p data-aos="fade" data-aos-duration="1500">
+    <!-- ============ ARCHIVES ============ -->
+    <section id="archives">
+      <div class="eyebrow">from the archives</div>
+      <h2 class="reveal">Old writing, kept as-is.</h2>
+      <p class="lead reveal" style="margin-bottom:32px;">Written at very different points in my life. Typos and all — reading back through them is half the point.</p>
+      <div class="archive-list" id="archiveList"></div>
+    </section>
 
-            </p data-aos="fade" data-aos-duration="1500">
-        </div>
-    </div>
+    <!-- ============ CONTACT ============ -->
+    <section id="contact">
+      <div class="eyebrow" style="justify-content:center;">still here?</div>
+      <h2>Let's build something,<br>or just say hi.</h2>
+      <p class="lead">If you want to talk, collaborate, argue about whether robots are taking our jobs, or just say hi — I'm around.</p>
+      <div class="link-grid">
+        <a class="link-card" href="https://github.com/AtharvaK123" target="_blank" rel="noopener">GITHUB</a>
+        <a class="link-card" href="https://www.linkedin.com/in/atharvavkadam" target="_blank" rel="noopener">LINKEDIN</a>
+        <a class="link-card" href="https://www.instagram.com/iamatharva.k/" target="_blank" rel="noopener">INSTAGRAM</a>
+        <a class="link-card" href="https://www.chess.com/member/k_atharrva" target="_blank" rel="noopener">CHESS.COM</a>
+      </div>
+      <div class="seeyou">SEE YOU AROUND.</div>
+    </section>
 
-    <div class="frontpage b5" id="game">
-    <div class="aboutus-items-container" style="text-align:center;">
-        
-        <a href="something.html" 
-           style="
-           display:inline-block;
-           margin:20px;
-           padding:18px 35px;
-           background:linear-gradient(45deg,#ff5fa2,#ff8ec7);
-           color:white;
-           text-decoration:none;
-           border-radius:50px;
-           font-size:28px;
-           font-weight:bold;
-           box-shadow:0 8px 20px rgba(255,105,180,0.4);
-           transition:0.3s;
-           ">
-            Click here for something interesting...
-        </a>
+    <footer>
+      <span>atharvak123.github.io — built &amp; maintained by Atharva Kadam</span>
+      <span>try <code>ls -a</code> in the shell, or the ↑↑↓↓←→←→BA of it all</span>
+    </footer>
 
-        <br><br>
-
-        <a href="trex.html"
-           style="
-           display:inline-block;
-           margin:20px;
-           padding:15px 30px;
-           background:#222;
-           color:white;
-           text-decoration:none;
-           border-radius:15px;
-           font-size:24px;
-           transition:0.3s;
-           ">
-           🎮 Play Game
-        </a>
-
-    </div>
+  </main>
 </div>
 
-    <script>
-        AOS.init();
-    </script>
-    
-    <script src = "main.js"></script>
+<!-- terminal shell overlay -->
+<div id="termOverlay">
+  <div class="tbar"><span>guest@atharvak123 — shell</span><button onclick="closeShell()">✕</button></div>
+  <div id="termLog"></div>
+  <div id="termInputRow"><span>$</span><input id="termInput" class="mono" autocomplete="off" spellcheck="false" /></div>
+</div>
+
+<!-- secret gate -->
+<div id="secretGate">
+  <div class="box" id="secretBox">
+    <div>404 — nothing to see here.</div>
+    <div style="margin-top:8px;color:var(--ink-faint)">this page only exists on April 1st.</div>
+    <button class="btn" onclick="document.getElementById('secretGate').classList.remove('open')">close</button>
+  </div>
+</div>
+
+<div id="konamiToast">↑↑↓↓←→←→BA — unlocked nothing useful, but hi 👋</div>
+
+<script>
+/* =========================================================
+   BOOT SEQUENCE
+   ========================================================= */
+const bootLines = [
+  "> connecting to atharvak123.github.io ...",
+  "> loading portfolio v4 (redesign)",
+  "> mounting /home /about /journey /projects /playground /archives /contact",
+  "> ready."
+];
+const bootEl = document.getElementById('bootText');
+let bi=0, bc=0;
+function typeBoot(){
+  if(bi>=bootLines.length){ finishBoot(); return; }
+  const line = bootLines[bi];
+  if(bc<=line.length){
+    bootEl.textContent = bootLines.slice(0,bi).join("\n") + (bi>0?"\n":"") + line.slice(0,bc);
+    bc++; setTimeout(typeBoot, 12);
+  } else { bi++; bc=0; setTimeout(typeBoot, 180); }
+}
+function finishBoot(){
+  setTimeout(()=>{
+    document.getElementById('boot').classList.add('hide');
+    document.getElementById('app').classList.add('show');
+    playHero();
+    initAll();
+  }, 300);
+}
+typeBoot();
+
+function playHero(){
+  document.getElementById('heroName').classList.add('play');
+  setTimeout(()=>document.getElementById('heroTag').classList.add('play'), 100);
+  setTimeout(()=>document.getElementById('heroSub').classList.add('play'), 100);
+  setTimeout(()=>document.getElementById('heroCta').classList.add('play'), 100);
+}
+
+/* =========================================================
+   AMBIENT BACKGROUND — aurora blobs + starfield, mouse reactive
+   ========================================================= */
+const bgCanvas = document.getElementById('bgCanvas');
+const bctx = bgCanvas.getContext('2d');
+let W,H, mx=0.5, my=0.35;
+function resizeBg(){ W=bgCanvas.width=window.innerWidth; H=bgCanvas.height=window.innerHeight; }
+resizeBg(); window.addEventListener('resize', resizeBg);
+window.addEventListener('mousemove', e=>{ mx = e.clientX/window.innerWidth; my = e.clientY/window.innerHeight; });
+
+const blobs = [
+  {x:.2,y:.25,r:.34,c:'139,107,255',s:0.00012,phase:0},
+  {x:.8,y:.15,r:.28,c:'255,79,195',s:0.00009,phase:2},
+  {x:.6,y:.75,r:.36,c:'53,230,214',s:0.00015,phase:4},
+];
+const stars = Array.from({length:120},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.3+.2,o:Math.random()*.6+.15}));
+
+function drawBg(t){
+  bctx.clearRect(0,0,W,H);
+  bctx.fillStyle = '#07060c';
+  bctx.fillRect(0,0,W,H);
+  stars.forEach(s=>{
+    bctx.globalAlpha = s.o;
+    bctx.fillStyle = '#fff';
+    bctx.beginPath(); bctx.arc(s.x*W, s.y*H, s.r, 0, Math.PI*2); bctx.fill();
+  });
+  bctx.globalAlpha = 1;
+  blobs.forEach(b=>{
+    const bx = (b.x + Math.sin(t*b.s+b.phase)*.05 + (mx-0.5)*.04) * W;
+    const by = (b.y + Math.cos(t*b.s+b.phase)*.05 + (my-0.5)*.04) * H;
+    const rad = b.r * Math.max(W,H);
+    const g = bctx.createRadialGradient(bx,by,0,bx,by,rad);
+    g.addColorStop(0, `rgba(${b.c},0.32)`);
+    g.addColorStop(1, `rgba(${b.c},0)`);
+    bctx.fillStyle = g;
+    bctx.beginPath(); bctx.arc(bx,by,rad,0,Math.PI*2); bctx.fill();
+  });
+  requestAnimationFrame(drawBg);
+}
+requestAnimationFrame(drawBg);
+
+/* =========================================================
+   CUSTOM CURSOR
+   ========================================================= */
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+let rx=innerWidth/2, ry=innerHeight/2, tx=rx, ty=ry;
+window.addEventListener('mousemove', e=>{
+  dot.style.left = e.clientX+'px'; dot.style.top = e.clientY+'px';
+  tx = e.clientX; ty = e.clientY;
+});
+(function ringLoop(){
+  rx += (tx-rx)*.18; ry += (ty-ry)*.18;
+  ring.style.left = rx+'px'; ring.style.top = ry+'px';
+  requestAnimationFrame(ringLoop);
+})();
+function bindCursor(el, label){
+  el.addEventListener('mouseenter', ()=>{ ring.classList.add('grow'); ring.querySelector('.label').textContent = label||''; });
+  el.addEventListener('mouseleave', ()=>{ ring.classList.remove('grow'); });
+}
+
+/* =========================================================
+   NAV
+   ========================================================= */
+const navEl = document.getElementById('floatNav');
+const navLinks = document.querySelectorAll('.nav-link');
+const pillBg = document.getElementById('pillBg');
+let lastScroll = 0;
+function positionPill(link){
+  if(!link || window.innerWidth<=860){ pillBg.style.width='0px'; return; }
+  const wrap = link.parentElement.getBoundingClientRect();
+  const r = link.getBoundingClientRect();
+  pillBg.style.left = (r.left - wrap.left) + 'px';
+  pillBg.style.width = r.width + 'px';
+}
+function toggleMobileNav(){
+  navEl.classList.toggle('open');
+  document.getElementById('navToggle').classList.toggle('open');
+}
+navLinks.forEach(l=>l.addEventListener('click', ()=>{
+  navEl.classList.remove('open');
+  document.getElementById('navToggle').classList.remove('open');
+}));
+
+const sections = document.querySelectorAll('main section');
+window.addEventListener('scroll', ()=>{
+  let current='hero';
+  sections.forEach(s=>{ if(window.scrollY >= s.offsetTop - 200) current = s.id; });
+  let activeLink=null;
+  navLinks.forEach(l=>{
+    const on = l.dataset.id===current;
+    l.classList.toggle('active', on);
+    if(on) activeLink=l;
+  });
+  positionPill(activeLink);
+
+  const sc = window.scrollY;
+  navEl.classList.toggle('hidden', sc>lastScroll && sc>200);
+  lastScroll = sc;
+
+  updateTimelineProgress();
+});
+window.addEventListener('load', ()=>positionPill(document.querySelector('.nav-link.active')||navLinks[0]));
+
+/* =========================================================
+   HERO floating code fragments
+   ========================================================= */
+const fragSnippets = ["const idea = () => build();","git commit -m 'why not'","while(curious){ try(); }","// works on my machine","npm run dream","for(let i=0;;i++) learn();"];
+const fragWrap = document.getElementById('heroFrags');
+fragSnippets.forEach((s,i)=>{
+  const el = document.createElement('div');
+  el.className = 'hero-frag';
+  el.textContent = s;
+  el.style.top = (10 + Math.random()*70) + '%';
+  el.style.left = (Math.random()*80+5) + '%';
+  el.style.animation = `floatFrag ${8+Math.random()*6}s ease-in-out ${i*0.6}s infinite`;
+  fragWrap.appendChild(el);
+});
+const style = document.createElement('style');
+style.textContent = `@keyframes floatFrag{0%,100%{transform:translateY(0);}50%{transform:translateY(-18px);}}`;
+document.head.appendChild(style);
+
+/* =========================================================
+   ABOUT CARDS + BIO + PILLS
+   ========================================================= */
+const aboutCards = [
+  {glyph:"01 / BUILD", title:"Build", body:"I like turning random ideas into actual, working things — even ones that probably didn't need to exist."},
+  {glyph:"02 / LEARN", title:"Learn", body:"I learn best by getting my hands dirty. Docs help. Breaking things and fixing them helps more."},
+  {glyph:"03 / TEACH", title:"Teach", body:"I teach coding at Code Ninjas, and I like making complicated things click for someone else."},
+  {glyph:"04 / EXPLORE", title:"Explore", body:"I'm constantly poking at new tools, frameworks, and ideas just to see what they can do."},
+];
+document.getElementById('aboutGrid').innerHTML = aboutCards.map(c=>`
+  <div class="about-card"><div class="glyph mono">${c.glyph}</div><h3>${c.title}</h3><p>${c.body}</p></div>
+`).join('');
+
+document.getElementById('bioBlock').innerHTML = `
+  <p>Hey, I'm Atharva. I'm someone who's always curious about how things work. I tend to get random ideas and, instead of leaving them as ideas, I usually end up thinking, "Okay… how hard would it be to actually make this?"</p>
+  <p>I love technology, building things, learning new stuff, and experimenting with ideas that probably sounded a little crazy when I first thought of them. I'm especially interested in AI, programming, data, and creating things that feel genuinely useful — or just really cool.</p>
+  <p>I'm also the kind of person who learns best by doing. I can spend hours trying to understand something once I'm interested in it, and I love that feeling when something finally clicks.</p>
+  <p>Outside of all the coding and school stuff, I'm just a person who cares a lot about the people around me, enjoys making memories, and is trying to figure out what I want my life to look like. I don't know exactly where I'll end up yet. But I know I want to build something I can be proud of.</p>
+`;
+
+const currentlyItems = ["🎓 Studying at Rutgers","💻 Building software","🤖 Exploring AI","📊 Learning Data Science","👨‍🏫 Teaching coding","🧠 Trying to understand how everything works"];
+document.getElementById('pillsWrap').innerHTML = currentlyItems.map(t=>`<span class="pill">${t}</span>`).join('');
+
+/* =========================================================
+   JOURNEY TIMELINE
+   ========================================================= */
+const journeyData = [
+  {stage:"white belt", title:"South Brunswick High School", when:"grad.", body:"Where the actual coding started — first real exposure to programming and the CS track that set the rest of this in motion."},
+  {stage:"yellow belt", title:"Learning to teach, not just to code", when:"jun–dec 2024", body:"Coding instructor at Code Ninjas Kendall Park. Teaching kids to program forces you to actually understand what you're doing — you can't hand-wave past a concept when a 9-year-old asks 'but why?'"},
+  {stage:"green belt", title:"Code Ninjas Robbinsville", when:"feb 2025 – present", body:"Coding instructor with admin-level involvement in the dojo's competition dashboard systems — building and maintaining the internal web tools the dojo actually runs on."},
+  {stage:"blue belt", title:"Rutgers University–New Brunswick", when:"expected grad. 2029", body:"Data Science major, Business Administration minor. Still early — still figuring out exactly what I want to build with it."},
+  {stage:"???", title:"Still building.", when:"—", body:"This site gets updated as it happens.", final:true},
+];
+const timelineEl = document.getElementById('timeline');
+timelineEl.insertAdjacentHTML('beforeend', journeyData.map(j=>`
+  <div class="tstep ${j.final?'final':''}">
+    <div class="node"></div>
+    <div class="stage mono">${j.stage}</div>
+    <h3>${j.title}</h3>
+    <p>${j.body}</p>
+    <span class="when mono">${j.when}</span>
+  </div>
+`).join(''));
+function updateTimelineProgress(){
+  const steps = document.querySelectorAll('.tstep');
+  let visibleBottom = 0;
+  steps.forEach(s=>{
+    const r = s.getBoundingClientRect();
+    if(r.top < window.innerHeight*0.75){
+      s.classList.add('in');
+      visibleBottom = s.offsetTop + 20 - timelineEl.offsetTop;
+    }
+  });
+  document.getElementById('tprog').style.height = visibleBottom + 'px';
+}
+
+/* =========================================================
+   PROJECTS
+   ========================================================= */
+const projects = [
+  {id:"minesweeper", num:"01", name:"Minesweeper", stack:"vanilla JS", desc:"Classic 9×9 board — flood-fill reveal, right-click flagging, real mine logic. Playable right here.", repo:"https://github.com/AtharvaK123/MineSweeper", run:true},
+  {id:"julia", num:"02", name:"Julia Set", stack:"canvas + JS", desc:"An interactive Julia set explorer — move your mouse to change the complex parameter and watch the fractal reshape in real time.", repo:"https://github.com/AtharvaK123/JuliaSet", run:true},
+  {id:"budget", num:"03", name:"Budget Tracker", stack:"vanilla JS", desc:"A small income/expense tracker — add transactions, see your running balance and a per-category breakdown.", repo:"https://github.com/AtharvaK123/budgetTrackerApp", run:true},
+];
+document.getElementById('projGrid').innerHTML = projects.map(p=>`
+  <div class="proj-card">
+    <div class="num mono">${p.num}</div>
+    <div class="titlebar"><h3>${p.name}</h3></div>
+    <div class="stack">${p.stack}</div>
+    <p class="desc">${p.desc}</p>
+    <div class="row">
+      ${p.run?`<button class="btn primary" onclick="toggleApp('${p.id}')" id="rb-${p.id}">▶ run</button>`:''}
+      <a class="btn" href="${p.repo}" target="_blank" rel="noopener">↗ repo</a>
+    </div>
+    <div class="app-window" id="win-${p.id}">
+      <div class="bar"><span>${p.name} — running (unmodified source)</span><button onclick="toggleApp('${p.id}')">✕ close</button></div>
+      <div class="body" id="body-${p.id}"></div>
+    </div>
+  </div>
+`).join('');
+
+const mounted = {};
+function toggleApp(id){
+  const win = document.getElementById('win-'+id);
+  win.classList.toggle('open');
+  if(win.classList.contains('open')){
+    win.scrollIntoView({behavior:'smooth', block:'nearest'});
+    if(!mounted[id]){
+      mounted[id]=true;
+      if(id==='minesweeper') mountMinesweeper(document.getElementById('body-minesweeper'));
+      if(id==='julia') mountJulia(document.getElementById('body-julia'));
+      if(id==='budget') mountBudget(document.getElementById('body-budget'));
+    }
+  }
+}
+
+/* ---- minesweeper : identical logic to repo, restyled ---- */
+function mountMinesweeper(root){
+  const SIZE=9, MINES=10;
+  let board, revealed, flagged, over, firstClick;
+  root.innerHTML = `<div id="msMeta"><span id="msCount"></span><span id="msState">playing</span><button class="btn" id="msReset" style="margin-left:auto;">↻ reset</button></div><div id="msBoard"></div>`;
+  const boardEl = root.querySelector('#msBoard');
+  boardEl.style.gridTemplateColumns = `repeat(${SIZE}, 26px)`;
+  const countEl = root.querySelector('#msCount');
+  const stateEl = root.querySelector('#msState');
+  root.querySelector('#msReset').onclick = init;
+
+  function init(){
+    board = Array.from({length:SIZE},()=>Array(SIZE).fill(0));
+    revealed = Array.from({length:SIZE},()=>Array(SIZE).fill(false));
+    flagged = Array.from({length:SIZE},()=>Array(SIZE).fill(false));
+    over=false; firstClick=true;
+    countEl.textContent = `mines: ${MINES}`;
+    stateEl.textContent = 'playing'; stateEl.style.color='';
+    render();
+  }
+  function placeMines(sr,sc){
+    let placed=0;
+    while(placed<MINES){
+      const r=Math.floor(Math.random()*SIZE), c=Math.floor(Math.random()*SIZE);
+      if(board[r][c]===9 || (Math.abs(r-sr)<=1 && Math.abs(c-sc)<=1)) continue;
+      board[r][c]=9; placed++;
+    }
+    for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++){
+      if(board[r][c]===9) continue;
+      let n=0;
+      for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+        const rr=r+dr, cc=c+dc;
+        if(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]===9) n++;
+      }
+      board[r][c]=n;
+    }
+  }
+  function flood(r,c){
+    if(r<0||r>=SIZE||c<0||c>=SIZE||revealed[r][c]||flagged[r][c]) return;
+    revealed[r][c]=true;
+    if(board[r][c]===0){
+      for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++) flood(r+dr,c+dc);
+    }
+  }
+  function checkWin(){
+    for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++){
+      if(board[r][c]!==9 && !revealed[r][c]) return false;
+    }
+    return true;
+  }
+  function render(){
+    boardEl.innerHTML='';
+    for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++){
+      const cell=document.createElement('div');
+      cell.className='ms-cell'+(revealed[r][c]?' revealed':'');
+      if(revealed[r][c] && board[r][c]===9){cell.classList.add('mine'); cell.textContent='●';}
+      else if(revealed[r][c] && board[r][c]>0){cell.textContent=board[r][c]; cell.style.color=['','#35e6d6','#ffb454','#ff4fc3','#8b6bff'][board[r][c]]||'#f3f1fb';}
+      else if(flagged[r][c]){cell.textContent='⚑'; cell.style.color='var(--amber)';}
+      cell.onclick=()=>{
+        if(over||flagged[r][c]) return;
+        if(firstClick){placeMines(r,c); firstClick=false;}
+        if(board[r][c]===9){
+          revealed[r][c]=true; over=true;
+          stateEl.textContent='boom — reset to try again'; stateEl.style.color='var(--magenta)';
+        } else {
+          flood(r,c);
+          if(checkWin()){over=true; stateEl.textContent='cleared!'; stateEl.style.color='var(--cyan)';}
+        }
+        render();
+      };
+      cell.oncontextmenu=(e)=>{
+        e.preventDefault();
+        if(over||revealed[r][c]) return;
+        flagged[r][c]=!flagged[r][c];
+        render();
+      };
+      boardEl.appendChild(cell);
+    }
+  }
+  init();
+}
+
+/* ---- julia set : identical logic to repo, restyled palette ---- */
+function mountJulia(root){
+  root.innerHTML = `<canvas id="juliaCanvas" width="420" height="420"></canvas><div class="julia-hint">move your mouse over the fractal — position sets the complex constant c. click to lock/unlock.</div>`;
+  const canvas = root.querySelector('#juliaCanvas');
+  const ctx = canvas.getContext('2d');
+  let W=420,H=420, cx=-0.7, cy=0.27015, locked=false;
+  const img = ctx.createImageData(W,H);
+  function draw(){
+    const maxIter=60;
+    for(let py=0;py<H;py++){
+      for(let px=0;px<W;px++){
+        let zx = (px-W/2)/(W*0.28);
+        let zy = (py-H/2)/(H*0.28);
+        let iter=0;
+        while(zx*zx+zy*zy<4 && iter<maxIter){
+          const xt = zx*zx - zy*zy + cx;
+          zy = 2*zx*zy + cy;
+          zx = xt;
+          iter++;
+        }
+        const idx=(py*W+px)*4;
+        if(iter===maxIter){img.data[idx]=8;img.data[idx+1]=7;img.data[idx+2]=15;}
+        else{
+          const t=iter/maxIter;
+          img.data[idx]=Math.floor(40+t*175);
+          img.data[idx+1]=Math.floor(30+ (1-t)*90 + Math.sin(t*4)*40);
+          img.data[idx+2]=Math.floor(140+t*110);
+        }
+        img.data[idx+3]=255;
+      }
+    }
+    ctx.putImageData(img,0,0);
+  }
+  canvas.addEventListener('mousemove', (e)=>{
+    if(locked) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX-rect.left)/rect.width;
+    const y = (e.clientY-rect.top)/rect.height;
+    cx = (x-0.5)*2; cy=(y-0.5)*2;
+    draw();
+  });
+  canvas.addEventListener('click', ()=> locked=!locked);
+  draw();
+}
+
+/* ---- budget tracker : identical logic to repo, restyled ---- */
+function mountBudget(root){
+  root.innerHTML = `
+    <div class="bt-form">
+      <input id="btDesc" placeholder="description" />
+      <input id="btAmt" placeholder="amount" type="number" step="0.01" style="width:100px;" />
+      <select id="btType"><option value="income">income</option><option value="expense">expense</option></select>
+      <button class="btn primary" id="btAdd">+ add</button>
+    </div>
+    <div class="bt-bal" id="btBal"></div>
+    <div class="bt-list" id="btList"></div>
+    <div class="julia-hint">in-memory only for this demo — deployed standalone this can be wired to localStorage.</div>
+  `;
+  let txns = [];
+  const balEl = root.querySelector('#btBal');
+  const listEl = root.querySelector('#btList');
+  function render(){
+    const bal = txns.reduce((s,t)=> s + (t.type==='income'?t.amt:-t.amt), 0);
+    balEl.textContent = (bal<0?'-':'') + '$' + Math.abs(bal).toFixed(2);
+    balEl.style.color = bal<0 ? 'var(--magenta)' : 'var(--cyan)';
+    listEl.innerHTML = txns.slice().reverse().map((t,ri)=>{
+      const i = txns.length-1-ri;
+      return `<div class="bt-row"><span>${t.desc||'(no desc)'} · ${t.type}</span><span>${t.type==='income'?'+':'-'}$${t.amt.toFixed(2)} <button onclick="window.__btRemove(${i})">✕</button></span></div>`;
+    }).join('') || `<div class="bt-row" style="border:none;">no transactions yet</div>`;
+  }
+  window.__btRemove = (i)=>{ txns.splice(i,1); render(); };
+  root.querySelector('#btAdd').onclick = ()=>{
+    const desc = root.querySelector('#btDesc').value.trim();
+    const amt = parseFloat(root.querySelector('#btAmt').value);
+    const type = root.querySelector('#btType').value;
+    if(!amt || amt<=0) return;
+    txns.push({desc,amt,type});
+    root.querySelector('#btDesc').value=''; root.querySelector('#btAmt').value='';
+    render();
+  };
+  render();
+}
+
+/* ---- minion orb — ambient network/brain visualization ---- */
+function mountMinionOrb(){
+  const canvas = document.getElementById('minionOrb');
+  const ctx = canvas.getContext('2d');
+  function size(){ const s = canvas.clientWidth||220; canvas.width=s; canvas.height=s; }
+  size(); window.addEventListener('resize', size);
+  const N = 22, pts = Array.from({length:N},(_,i)=>{
+    const a = (i/N)*Math.PI*2;
+    return {a, r: 0.55+Math.random()*0.4, sp: 0.15+Math.random()*0.25};
+  });
+  function draw(t){
+    const s = canvas.width, cx=s/2, cy=s/2, R=s*0.36;
+    ctx.clearRect(0,0,s,s);
+    const nodePos = pts.map(p=>{
+      const ang = p.a + t*0.00025*p.sp;
+      const rad = R*p.r*(0.85+0.15*Math.sin(t*0.0006+p.a*3));
+      return {x: cx+Math.cos(ang)*rad, y: cy+Math.sin(ang)*rad};
+    });
+    ctx.strokeStyle='rgba(139,107,255,0.25)'; ctx.lineWidth=1;
+    for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
+      const dx=nodePos[i].x-nodePos[j].x, dy=nodePos[i].y-nodePos[j].y;
+      if(dx*dx+dy*dy < (R*0.9)*(R*0.9)){
+        ctx.beginPath(); ctx.moveTo(nodePos[i].x,nodePos[i].y); ctx.lineTo(nodePos[j].x,nodePos[j].y); ctx.stroke();
+      }
+    }
+    const coreGrad = ctx.createRadialGradient(cx,cy,0,cx,cy,R*0.5);
+    coreGrad.addColorStop(0,'rgba(53,230,214,0.5)'); coreGrad.addColorStop(1,'rgba(53,230,214,0)');
+    ctx.fillStyle=coreGrad; ctx.beginPath(); ctx.arc(cx,cy,R*0.5,0,Math.PI*2); ctx.fill();
+    nodePos.forEach(p=>{
+      ctx.fillStyle='#ff4fc3';
+      ctx.beginPath(); ctx.arc(p.x,p.y,2.4,0,Math.PI*2); ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+}
+
+/* =========================================================
+   PLAYGROUND — cursor trail particle field
+   ========================================================= */
+function mountPlayground(){
+  const canvas = document.getElementById('trailCanvas');
+  const ctx = canvas.getContext('2d');
+  function size(){ canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; }
+  size(); window.addEventListener('resize', size);
+  let px = canvas.width/2, py = canvas.height/2, active=false;
+  const colors = ['139,107,255','255,79,195','53,230,214','255,180,84'];
+  const parts = [];
+  canvas.addEventListener('mousemove', e=>{
+    const r = canvas.getBoundingClientRect();
+    px = e.clientX-r.left; py = e.clientY-r.top; active=true;
+    for(let i=0;i<2;i++) parts.push({x:px,y:py,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,life:1,c:colors[Math.floor(Math.random()*colors.length)],r:Math.random()*3+1.5});
+    if(parts.length>260) parts.splice(0,parts.length-260);
+  });
+  canvas.addEventListener('touchmove', e=>{
+    const r = canvas.getBoundingClientRect(); const t=e.touches[0];
+    px=t.clientX-r.left; py=t.clientY-r.top;
+    parts.push({x:px,y:py,vx:0,vy:0,life:1,c:colors[Math.floor(Math.random()*colors.length)],r:3});
+  }, {passive:true});
+  function loop(){
+    ctx.fillStyle = 'rgba(5,4,9,0.18)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    for(let i=parts.length-1;i>=0;i--){
+      const p = parts[i];
+      p.x+=p.vx; p.y+=p.vy; p.life-=0.012;
+      if(p.life<=0){ parts.splice(i,1); continue; }
+      ctx.fillStyle = `rgba(${p.c},${p.life})`;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); ctx.fill();
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+/* =========================================================
+   ARCHIVES / blog
+   ========================================================= */
+const blogs = [
+  {n:6, title:"Robotic Evolution or Revolution?", date:"February 21, 2021", body:`A new age. Rebellions. A house divided. This shall all start soon. Robots shall rise and conquer most of what humans used to do. Most employees' jobs will be gone.
+
+A robot is something that can be programmed by a computer and can carry out a special series of functions by itself. There are two types: a Physical Robot, which moves around doing the same activities as humans, and a Software Robot, a program that operates by itself to help jobs and businesses run faster and more organized.
+
+Futurists say robots will take over many jobs and displace a lot of workers. The Bank of England predicts 80 million jobs will be taken over in total. About 8.5%, or 20 million jobs, will be done by robots by the end of 2030 — the US alone stands to lose 1.5 million.
+
+The good news: some jobs stay open to humans because robots struggle with Perception, Manipulation, Social Intelligence, and Creativity. Robots cannot imagine new things the way we can.
+
+There are advantages too. When ATMs replaced human tellers, banks saved money that went toward opening new branches and new jobs. The same pattern happened with computers. Robots also don't need breaks or salaries, freeing up resources elsewhere.
+
+As I wrote then: robots are a new generation of workers, with both disadvantages and advantages. It's up to us to look ahead to brighter beginnings rather than dwell on what gets left behind.`},
+  {n:5, title:"Books and Games", date:"August 24, 2019", body:`Do you like to read books or play games? Both? Some must-reads in my opinion: the Warriors series, Percy Jackson, Harry Potter, Magnus Chase, and the Genius Files.
+
+In Magnus Chase and the Gods of Asgard, Magnus has to save the Nine Worlds from an attack planned by Loki, helped by Annabeth, Samirah, and Alex. Harry Potter stops Voldemort from destroying the Wizarding world; Percy Jackson stops Kronos from destroying Mount Olympus and then fights Gaea — my two favorite series.
+
+Warriors is about wildcats facing danger, and it shows how other animals might see us and how rude we can be to nature.
+
+As for games — I don't actually play a ton of them. I play soccer, basketball, cricket, and dodgeball. I like inventing games more than playing them. It's much more fun.
+
+Reading books makes you mentally strong. Sports make you physically and socially strong. So — go do both.`},
+  {n:4, title:"Niagara Falls", date:"August 9, 2019", body:`Have you ever gone to Niagara Falls? Here's what to know. Don't take the bus tour — they rush you between spots. Go by car, and pack a charger, water bottles, food, a garbage bag, and a camera.
+
+On the way, there's a glass museum worth stopping at — the Corning Glass Museum, the only glass museum in New York.
+
+Once you're there, give it two full days. Day one: the Maid of the Mist, and the Cave of the Winds — sometimes there are even fireworks. Day two: roam the attractions, and at night you'll see the illuminated falls, which no picture really does justice.
+
+Other spots worth it: the Adventure Theater, the Aquarium, the Discovery Center, and the hiking trails. Hiking and the Discovery Center were the most popular activities when I went. If you have extra time, take a scenic view or head up the observation tower.`},
+  {n:3, title:"Basketball Camp", date:"August 2, 2019", body:`Have you ever gone to a camp without being nervous? I hadn't planned on going — the night before, I actually tried to get out of it. But what I got to do there was way different than what I expected.
+
+Each day: hotshots, foul shots, layups, and games. My team, Villanova, lost 3 games but won the rest. I got 10 layups, 8 of 20 foul shots the first round, then improved to 10 of 20 later. In Hotshots I scored 13 points, with a high of 15 across the week. At the end, the top scorers from each event competed — our team came in 2nd place overall.
+
+The most hilarious moment: my team missed a shot and I rebounded it with a volleyball set. The other team half-argued, half-laughed with the referee about it.
+
+Overall, I loved it — camp gave me a break from what I'd normally be doing on a regular day.`},
+  {n:2, title:"Keep Calm and Move On", date:"July 2, 2019", body:`If you have a favorite thing and your parents just come take it away — how do you feel? That's basically what happened to me one night in June 2019.
+
+My parents went to watch a movie in their room and expected me to sleep. Instead I started reading Percy Jackson: The Last Olympian in the dark, which I wasn't allowed to do. When they came out and saw me, my mom closed the book — without marking the page. That's what actually got to me: not saving my progress felt just like losing progress in a video game. So I reacted badly, which led to a pretty rough punishment from my dad.
+
+What I took away from it: calm yourself down first, then tell the person what they should have done differently. If I'd done that, I probably wouldn't have needed to apologize — or been punished.
+
+My own steps for next time: count to 10 or 20, calmly explain what you'd have preferred, and if it's already happened — with a book you can find your page again, and with a game you usually get there even faster the second time.
+
+Moral: stay calm and move on.`},
+  {n:1, title:"My 6th Grade Experience", date:"June 30, 2019", body:`My first day of 6th grade at Woodrow Wilson Middle School was September 7th — already 3 days late. The school looked small from outside but felt like a mansion once I got in, and my classes were scattered all over the building at first.
+
+First marking period, I had a lot of missing math assignments simply because I didn't know where homework was being posted — once I found "MarroccoMath" on Google Classroom, that mostly stopped. I made about 10 friends that year, which made the year feel a lot less lonely.
+
+Second marking period went better — mostly B+ to A+ grades, some of my best grades ever. I joined the Indian Cultural Club, where we celebrated Holi, Gudi Padwa, Diwali, plus Christmas and Halloween. Third and fourth marking periods were the best of the year, grade-wise.
+
+There was no field trip that year because of too many students — we got a field day instead, which some of the older grades were pretty jealous about. Last day of school was mostly movies — Wonder was my favorite, since it actually captures what middle school is like.`},
+];
+document.getElementById('archiveList').innerHTML = blogs.map(b=>`
+  <details class="archive-entry">
+    <summary><span class="t">${b.date.slice(-4)} — ${b.title}</span><span class="d mono">entry #${b.n} · ${b.date}</span></summary>
+    <div class="content">${b.body.split('\n\n').map(p=>`<p>${p}</p>`).join('')}</div>
+  </details>
+`).join('');
+
+/* =========================================================
+   REVEAL ON SCROLL
+   ========================================================= */
+function initReveals(){
+  const els = document.querySelectorAll('.reveal, .pill');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach((e,i)=>{
+      if(e.isIntersecting){
+        setTimeout(()=> e.target.classList.add('in'), i*40%300);
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.15});
+  els.forEach(el=>io.observe(el));
+}
+
+/* magnetic + cursor bind for interactive elements */
+function initInteractiveBinds(){
+  document.querySelectorAll('.magnetic-btn, .btn, .link-card, .pill, .about-card, .proj-card').forEach(el=>bindCursor(el, el.tagName==='A'&&el.href&&el.href.includes('github')?'':''));
+  document.querySelectorAll('.proj-card .btn.primary').forEach(el=>bindCursor(el,'VIEW'));
+  document.querySelectorAll('a[target="_blank"]').forEach(el=>bindCursor(el,'↗'));
+
+  document.querySelectorAll('.magnetic-btn').forEach(btn=>{
+    btn.addEventListener('mousemove', e=>{
+      const r = btn.getBoundingClientRect();
+      const dx = (e.clientX - r.left - r.width/2) * .25;
+      const dy = (e.clientY - r.top - r.height/2) * .35;
+      btn.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+    btn.addEventListener('mouseleave', ()=> btn.style.transform = '');
+  });
+}
+
+function initAll(){
+  initReveals();
+  initInteractiveBinds();
+  mountMinionOrb();
+  mountPlayground();
+  updateTimelineProgress();
+}
+
+/* =========================================================
+   TERMINAL SHELL
+   ========================================================= */
+const termLog = document.getElementById('termLog');
+const termInput = document.getElementById('termInput');
+function openShell(){ document.getElementById('termOverlay').classList.add('open'); termInput.focus(); }
+function closeShell(){ document.getElementById('termOverlay').classList.remove('open'); }
+function printTerm(text, cls){
+  const d = document.createElement('div');
+  if(cls) d.className = cls;
+  d.textContent = text;
+  termLog.appendChild(d);
+  termLog.scrollTop = termLog.scrollHeight;
+}
+printTerm("welcome. type 'help' to see what this does.", 'o');
+
+const today = new Date();
+const isAprilFirst = today.getMonth() === 3 && today.getDate() === 1;
+
+function runCmd(raw){
+  const cmd = raw.trim();
+  printTerm('$ '+cmd, 'p');
+  if(cmd==='') return;
+  const [base, ...args] = cmd.split(' ');
+  switch(base){
+    case 'help':
+      printTerm('commands: whoami · ls [projects|blog|-a] · cat blog/latest.md · cd <section> · konami · theme · clear', 'o');
+      break;
+    case 'whoami':
+      printTerm('Atharva Kadam — CS/Data Science student @ Rutgers, coding instructor @ Code Ninjas Robbinsville.', 'o');
+      break;
+    case 'ls':
+      if(args[0]==='projects') printTerm('MineSweeper/  JuliaSet/  budgetTrackerApp/  minionAI/ (pending)', 'o');
+      else if(args[0]==='blog') printTerm(blogs.map(b=>`blog-${b.n}.md`).join('  '), 'o');
+      else if(args[0]==='-a') printTerm('.  ..  about.md  journey/  projects/  playground/  archives/  contact.md  .something.html', 'o');
+      else printTerm('about.md  journey/  projects/  playground/  archives/  contact.md', 'o');
+      break;
+    case 'cat':
+      if(args.join(' ')==='blog/latest.md') printTerm(`Blog #${blogs[0].n} — ${blogs[0].title} (${blogs[0].date})`, 'o');
+      else if(args.join(' ')==='.something.html' || args.join(' ')==='something.html') openSecret();
+      else printTerm('cat: file not found', 'o');
+      break;
+    case 'konami':
+      triggerKonami(); break;
+    case 'theme':
+      printTerm('nice try — there is only one theme here, and it took a while to get right.', 'o'); break;
+    case 'cd':
+    case 'open':
+      { const t = (args[0]||'').replace('.md','').replace('/','');
+        const el = document.getElementById(t) || document.getElementById(t==='home'?'hero':t);
+        if(el){ el.scrollIntoView({behavior:'smooth'}); printTerm('→ navigated', 'o'); }
+        else printTerm('no such section', 'o'); }
+      break;
+    case 'clear':
+      termLog.innerHTML=''; break;
+    default:
+      printTerm(`command not found: ${base} — type 'help'`, 'o');
+  }
+}
+termInput.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter'){ runCmd(termInput.value); termInput.value=''; }
+});
+
+function openSecret(){
+  const gate = document.getElementById('secretGate');
+  const box = document.getElementById('secretBox');
+  if(isAprilFirst){
+    box.innerHTML = `<div style="color:var(--amber)">unlocked. today's the day.</div>
+      <div style="margin-top:10px;">this one's an April Fools page — best experienced full screen.</div>
+      <button class="btn primary" style="margin-top:14px;" onclick="window.__openSecretFrame()">open it</button>
+      <button class="btn" onclick="document.getElementById('secretGate').classList.remove('open')">close</button>`;
+  } else {
+    box.innerHTML = `<div>404 — nothing to see here.</div>
+      <div style="margin-top:8px;color:var(--ink-faint)">this page only exists on April 1st. come back then.</div>
+      <button class="btn" style="margin-top:14px;" onclick="document.getElementById('secretGate').classList.remove('open')">close</button>`;
+  }
+  gate.classList.add('open');
+}
+window.__openSecretFrame = ()=>{
+  const box = document.getElementById('secretBox');
+  box.parentElement.style.maxWidth='100%';
+  box.parentElement.style.width='90vw';
+  box.parentElement.style.height='90vh';
+  box.parentElement.style.padding='0';
+  box.innerHTML = `<iframe id="secretFrame" src="something.html"></iframe>`;
+};
+
+/* =========================================================
+   EASTER EGGS — konami code
+   ========================================================= */
+const konamiSeq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let konamiPos = 0;
+window.addEventListener('keydown', (e)=>{
+  const key = e.key.length===1 ? e.key.toLowerCase() : e.key;
+  if(key === konamiSeq[konamiPos]){
+    konamiPos++;
+    if(konamiPos === konamiSeq.length){ triggerKonami(); konamiPos = 0; }
+  } else {
+    konamiPos = (key === konamiSeq[0]) ? 1 : 0;
+  }
+});
+function triggerKonami(){
+  const toast = document.getElementById('konamiToast');
+  toast.classList.add('show');
+  document.body.style.transition = 'filter .6s';
+  document.body.style.filter = 'hue-rotate(180deg)';
+  setTimeout(()=>{ document.body.style.filter=''; }, 2200);
+  setTimeout(()=> toast.classList.remove('show'), 3400);
+}
+
+console.log('%cnosy, huh?', 'font-family:monospace;font-size:14px;color:#35e6d6;');
+console.log('%ctry the konami code. or type konami in the shell.', 'font-family:monospace;font-size:11px;color:#8b6bff;');
+</script>
 </body>
+</html>

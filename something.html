@@ -3,265 +3,82 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Mother's Day Surprise</title>
+<title>Something Interesting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
-    *{
-        margin:0;
-        padding:0;
-        box-sizing:border-box;
-    }
-
+    *{margin:0;padding:0;box-sizing:border-box;}
     body{
-        overflow:hidden;
-        font-family:Comic Sans MS, cursive;
-        background:linear-gradient(135deg,#ffd6e7,#ffeccf,#ffe0f7);
-        height:100vh;
-        display:flex;
-        justify-content:center;
-        align-items:center;
+        overflow:hidden;font-family:'Space Grotesk', sans-serif;
+        background:radial-gradient(ellipse at top, #1a1330, #07060c 70%);
+        height:100vh;display:flex;justify-content:center;align-items:center;
         transition:background 2s ease;
     }
-
     .screen{
-        text-align:center;
-        position:relative;
-        width:100%;
-        height:100%;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        flex-direction:column;
+        text-align:center;position:relative;width:100%;height:100%;
+        display:flex;justify-content:center;align-items:center;flex-direction:column;
     }
-
-    h1{
-        font-size:3rem;
-        color:#ff2e63;
-        text-shadow:0 0 15px rgba(255,255,255,0.8);
-        transition:all 1s ease;
-    }
-
+    h1{font-size:3rem;color:#fff;background:linear-gradient(120deg,#fff,#cfc7ff,#35e6d6);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(139,107,255,.4);transition:all 1s ease;}
     #continueBtn{
-        margin-top:30px;
-        padding:15px 40px;
-        border:none;
-        border-radius:50px;
-        background:linear-gradient(45deg,#ff5fa2,#ff8ec7);
-        color:white;
-        font-size:1.2rem;
-        cursor:pointer;
-        opacity:0;
-        transform:translateY(20px);
-        pointer-events:none;
-        transition:all 1s ease;
-        box-shadow:0 10px 25px rgba(255, 105, 180, 0.4);
+        margin-top:34px;padding:16px 42px;border:none;border-radius:100px;
+        background:linear-gradient(135deg,#8b6bff,#ff4fc3 55%,#35e6d6);color:#0a0a12;font-size:1rem;font-weight:700;
+        font-family:'JetBrains Mono', monospace;letter-spacing:.04em;
+        cursor:pointer;opacity:0;transform:translateY(20px);pointer-events:none;
+        transition:all 1s ease;box-shadow:0 10px 35px rgba(139,107,255,.4);
     }
-
-    #continueBtn.show{
-        opacity:1;
-        transform:translateY(0);
-        pointer-events:auto;
-    }
-
-    #continueBtn:hover{
-        transform:scale(1.08);
-    }
-
-    /* FINAL SCREEN */
-
+    #continueBtn.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+    #continueBtn:hover{transform:scale(1.08);}
     #finalScreen{
-        display:none;
-        flex-direction:column;
-        justify-content:center;
-        align-items:center;
-        background:radial-gradient(circle at center,#fff0f6,#ffd6e7,#ffc2dd);
+        display:none;flex-direction:column;justify-content:center;align-items:center;
+        background:radial-gradient(circle at center,#1a1330,#0d0b17 70%);
         animation:bgPulse 6s infinite alternate;
     }
-
-    @keyframes bgPulse{
-        from{
-            filter:hue-rotate(0deg);
-        }
-        to{
-            filter:hue-rotate(25deg);
-        }
-    }
-
+    @keyframes bgPulse{from{filter:hue-rotate(0deg);} to{filter:hue-rotate(25deg);}}
     .mothers-text{
-        position:absolute;
-        top:50px;
-        font-size:4rem;
-        font-family:cursive;
-        color:#ff3d7f;
-        opacity:0;
-        animation:fadeIn 3s forwards;
-        text-shadow:
-            0 0 10px rgba(255,255,255,0.9),
-            0 0 25px rgba(255,105,180,0.6);
+        position:absolute;top:50px;font-size:clamp(2rem,6vw,4rem);font-family:'Space Grotesk', sans-serif;font-weight:700;
+        background:linear-gradient(120deg,#ff4fc3,#8b6bff,#35e6d6);-webkit-background-clip:text;background-clip:text;color:transparent;
+        opacity:0;animation:fadeIn 3s forwards;
+        text-shadow:0 0 30px rgba(255,79,195,.35);
     }
+    @keyframes fadeIn{to{opacity:1;}}
+    .rose-wrapper{position:relative;width:300px;height:500px;display:flex;justify-content:center;align-items:center;}
+    .stem{position:absolute;width:10px;height:0;background:linear-gradient(to bottom,#35e6d6,#1c9b8f);bottom:50px;border-radius:20px;animation:growStem 3s forwards;box-shadow:0 0 20px rgba(53,230,214,.3);}
+    @keyframes growStem{to{height:280px;}}
+    .leaf{position:absolute;width:70px;height:35px;background:#2fd6a8;border-radius:70px 0;opacity:0;box-shadow:0 0 16px rgba(53,230,214,.3);}
+    .leaf.left{transform:rotate(-35deg);left:95px;bottom:180px;animation:leafAppear 2s 2s forwards;}
+    .leaf.right{transform:rotate(145deg);right:95px;bottom:240px;animation:leafAppear 2s 2.3s forwards;}
+    @keyframes leafAppear{from{opacity:0;transform:scale(0) rotate(0deg);} to{opacity:1;}}
+    .flower{position:absolute;top:80px;width:0;height:0;animation:bloom 3s 2.5s forwards;}
+    @keyframes bloom{to{width:180px;height:180px;}}
+    .petal{position:absolute;width:90px;height:90px;background:radial-gradient(circle at top,#ff9ae3,#ff4fc3);border-radius:50%;opacity:0;animation:petalFade 1.5s forwards;box-shadow:0 0 25px rgba(255,79,195,.5);}
+    .petal:nth-child(1){left:45px;top:0;animation-delay:3s;}
+    .petal:nth-child(2){left:0;top:45px;animation-delay:3.2s;}
+    .petal:nth-child(3){right:0;top:45px;animation-delay:3.4s;}
+    .petal:nth-child(4){left:45px;bottom:0;animation-delay:3.6s;}
+    .petal:nth-child(5){left:45px;top:45px;background:radial-gradient(circle,#c9b6ff,#8b6bff);animation-delay:3.8s;}
+    @keyframes petalFade{from{opacity:0;transform:scale(0) rotate(-180deg);} to{opacity:1;transform:scale(1) rotate(0deg);}}
+    .heart{position:absolute;color:#ff4fc3;font-size:24px;animation:floatUp linear infinite;opacity:0.8;filter:drop-shadow(0 0 6px rgba(255,79,195,.6));}
+    @keyframes floatUp{from{transform:translateY(100vh) scale(0.5);opacity:0;} 20%{opacity:1;} to{transform:translateY(-120vh) scale(1.2);opacity:0;}}
 
-    @keyframes fadeIn{
-        to{
-            opacity:1;
-        }
+    /* gate screen for any day that isn't April 1st */
+    #lockedScreen{
+        display:none;flex-direction:column;justify-content:center;align-items:center;
+        background:#07060c;color:#a7a2c2;font-family:'JetBrains Mono', monospace;
+        text-align:center;padding:20px;
     }
-
-    /* ROSE */
-
-    .rose-wrapper{
-        position:relative;
-        width:300px;
-        height:500px;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-    }
-
-    .stem{
-        position:absolute;
-        width:10px;
-        height:0;
-        background:linear-gradient(to bottom,#2c9b4b,#157532);
-        bottom:50px;
-        border-radius:20px;
-        animation:growStem 3s forwards;
-    }
-
-    @keyframes growStem{
-        to{
-            height:280px;
-        }
-    }
-
-    .leaf{
-        position:absolute;
-        width:70px;
-        height:35px;
-        background:#2dbd5f;
-        border-radius:70px 0;
-        opacity:0;
-    }
-
-    .leaf.left{
-        transform:rotate(-35deg);
-        left:95px;
-        bottom:180px;
-        animation:leafAppear 2s 2s forwards;
-    }
-
-    .leaf.right{
-        transform:rotate(145deg);
-        right:95px;
-        bottom:240px;
-        animation:leafAppear 2s 2.3s forwards;
-    }
-
-    @keyframes leafAppear{
-        from{
-            opacity:0;
-            transform:scale(0) rotate(0deg);
-        }
-        to{
-            opacity:1;
-        }
-    }
-
-    .flower{
-        position:absolute;
-        top:80px;
-        width:0;
-        height:0;
-        animation:bloom 3s 2.5s forwards;
-    }
-
-    @keyframes bloom{
-        to{
-            width:180px;
-            height:180px;
-        }
-    }
-
-    .petal{
-        position:absolute;
-        width:90px;
-        height:90px;
-        background:radial-gradient(circle at top,#ff9ac7,#ff2e63);
-        border-radius:50%;
-        opacity:0;
-        animation:petalFade 1.5s forwards;
-        box-shadow:0 0 20px rgba(255,70,120,0.5);
-    }
-
-    .petal:nth-child(1){
-        left:45px;
-        top:0;
-        animation-delay:3s;
-    }
-
-    .petal:nth-child(2){
-        left:0;
-        top:45px;
-        animation-delay:3.2s;
-    }
-
-    .petal:nth-child(3){
-        right:0;
-        top:45px;
-        animation-delay:3.4s;
-    }
-
-    .petal:nth-child(4){
-        left:45px;
-        bottom:0;
-        animation-delay:3.6s;
-    }
-
-    .petal:nth-child(5){
-        left:45px;
-        top:45px;
-        background:radial-gradient(circle,#ffbfd9,#ff3d7f);
-        animation-delay:3.8s;
-    }
-
-    @keyframes petalFade{
-        from{
-            opacity:0;
-            transform:scale(0) rotate(-180deg);
-        }
-        to{
-            opacity:1;
-            transform:scale(1) rotate(0deg);
-        }
-    }
-
-    /* Floating hearts */
-
-    .heart{
-        position:absolute;
-        color:#ff4f8b;
-        font-size:24px;
-        animation:floatUp linear infinite;
-        opacity:0.8;
-    }
-
-    @keyframes floatUp{
-        from{
-            transform:translateY(100vh) scale(0.5);
-            opacity:0;
-        }
-        20%{
-            opacity:1;
-        }
-        to{
-            transform:translateY(-120vh) scale(1.2);
-            opacity:0;
-        }
-    }
-
+    #lockedScreen h1{color:#ffb454;font-size:1.4rem;text-shadow:none;font-family:inherit;background:none;-webkit-text-fill-color:initial;color:#ffb454;}
+    #lockedScreen p{margin-top:10px;font-size:.9rem;max-width:340px;color:#6c6787;}
 </style>
 </head>
 
 <body>
+
+<div class="screen" id="lockedScreen">
+    <h1>404 — nothing to see here</h1>
+    <p>this page only wakes up on April 1st. come back then.</p>
+</div>
 
 <div class="screen" id="homeScreen">
     <h1 id="mainText">April Fools!</h1>
@@ -269,16 +86,11 @@
 </div>
 
 <div class="screen" id="finalScreen">
-
     <div class="mothers-text">Happy Mother's Day</div>
-
     <div class="rose-wrapper">
-
         <div class="stem"></div>
-
         <div class="leaf left"></div>
         <div class="leaf right"></div>
-
         <div class="flower">
             <div class="petal"></div>
             <div class="petal"></div>
@@ -286,72 +98,44 @@
             <div class="petal"></div>
             <div class="petal"></div>
         </div>
-
     </div>
-
 </div>
 
 <script>
+const today = new Date();
+const isAprilFirst = today.getMonth() === 3 && today.getDate() === 1;
 
-const text = document.getElementById("mainText");
-const button = document.getElementById("continueBtn");
+if(!isAprilFirst){
+    document.getElementById('homeScreen').style.display = 'none';
+    document.getElementById('lockedScreen').style.display = 'flex';
+} else {
+    const text = document.getElementById("mainText");
+    const button = document.getElementById("continueBtn");
 
-setTimeout(() => {
-    text.innerText = "but wait, its not april...";
-}, 5000);
+    setTimeout(() => { text.innerText = "but wait, its not april..."; }, 5000);
+    setTimeout(() => { button.classList.add("show"); }, 12000);
 
-setTimeout(() => {
-    button.classList.add("show");
-}, 12000);
+    button.addEventListener("click", () => {
+        document.getElementById("homeScreen").style.display = "none";
+        document.getElementById("finalScreen").style.display = "flex";
+        createHearts();
+    });
 
-button.addEventListener("click", () => {
-
-    document.getElementById("homeScreen").style.display = "none";
-    document.getElementById("finalScreen").style.display = "flex";
-
-    createHearts();
-});
-
-function createHearts(){
-
-    for(let i=0;i<40;i++){
-
-        const heart = document.createElement("div");
-        heart.classList.add("heart");
-
-        heart.innerHTML = "❤";
-
-        heart.style.left = Math.random()*100 + "vw";
-        heart.style.animationDuration = (4 + Math.random()*5) + "s";
-        heart.style.fontSize = (15 + Math.random()*30) + "px";
-
-        document.body.appendChild(heart);
-
-        setTimeout(()=>{
-            heart.remove();
-        },9000);
+    function createHearts(){
+        for(let i=0;i<40;i++){ spawnHeart(); }
+        setInterval(spawnHeart, 300);
     }
-
-    setInterval(()=>{
-
+    function spawnHeart(){
         const heart = document.createElement("div");
         heart.classList.add("heart");
-
         heart.innerHTML = "❤";
-
         heart.style.left = Math.random()*100 + "vw";
         heart.style.animationDuration = (4 + Math.random()*5) + "s";
         heart.style.fontSize = (15 + Math.random()*30) + "px";
-
         document.body.appendChild(heart);
-
-        setTimeout(()=>{
-            heart.remove();
-        },9000);
-
-    },300);
+        setTimeout(()=>{ heart.remove(); }, 9000);
+    }
 }
-
 </script>
 
 </body>
